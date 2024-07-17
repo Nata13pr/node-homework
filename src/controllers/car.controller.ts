@@ -19,6 +19,7 @@ class CarController {
       const result = await carService.create(dto);
       res.status(201).json(result);
     } catch (e) {
+
       next(e);
     }
   }
