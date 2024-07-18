@@ -9,6 +9,7 @@ class UserRepository {
 
   public async create(dto: IUser): Promise<IUser> {
     const users = await fsService.read();
+
     const index = users.findIndex((user) => user.email === dto.email);
 
     if (index !== -1) {
