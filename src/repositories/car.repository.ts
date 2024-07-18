@@ -17,30 +17,17 @@ class CarRepository {
     return car;
   }
 
-  public async update(dto: ICar, id: number): Promise<ICar> {
-    const { brand, year, price } = dto;
-
+  public async update(
+    brand: string,
+    year: number,
+    price: number,
+    id: number,
+  ): Promise<ICar> {
     const cars = await this.getList();
     const car = await cars.find((car) => car.id === id);
 
     if (!car) {
       throw new ApiError(`There is no car with id ${id}`, 400);
-    }
-
-    if (!brand || brand.length < 3) {
-      throw new ApiError(
-        "brand is required and should be at least 3 characters",
-        400,
-      );
-    }
-    if (!year || year <= 1990) {
-      throw new ApiError("year is required and should be valid", 400);
-    }
-    if (!price || price < 2000) {
-      throw new ApiError(
-        "    if (!price || price < 2000) {\n is required and should be at least 6 characters",
-        400,
-      );
     }
 
     car.brand = brand;

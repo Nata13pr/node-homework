@@ -12,7 +12,25 @@ class CarService {
   }
 
   public async update(dto: ICar, id: number): Promise<ICar> {
-    return await carRepository.update(dto, id);
+    const { brand, year, price } = dto;
+
+    if (!brand || brand.length < 3) {
+      throw new ApiError(
+        "brand is required and should be at least 3 characters",
+        400,
+      );
+    }
+    if (!year || year <= 1990) {
+      throw new ApiError("year is required and should be valid", 400);
+    }
+    if (!price || price < 2000) {
+      throw new ApiError(
+        "    if (!price || price < 2000) {\n is required and should be at least 6 characters",
+        400,
+      );
+    }
+
+    return await carRepository.update(brand, year, price, id);
   }
 
   public async delete(id: number): Promise<void> {
