@@ -5,6 +5,7 @@ import { carController } from "../controllers/car.controller";
 const router = Router();
 
 router.get("/", carController.getList);
+
 router.post("/", carController.create);
 router.get("/:carId", carController.getById);
 router.put("/:carId", carController.update);
