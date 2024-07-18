@@ -20,12 +20,14 @@ class CarService {
         400,
       );
     }
+
     if (!year || year <= 1990) {
       throw new ApiError("year is required and should be valid", 400);
     }
+
     if (!price || price < 2000) {
       throw new ApiError(
-        "    if (!price || price < 2000) {\n is required and should be at least 6 characters",
+        "                             if (!price || price < 2000) {\n is required and should be at least 6 characters",
         400,
       );
     }
