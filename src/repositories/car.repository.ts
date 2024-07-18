@@ -57,6 +57,7 @@ class CarRepository {
     const cars = await fsCarService.read();
 
     const index = cars.findIndex((car) => car.id === id);
+
     if (index === -1) {
       throw new ApiError("Car not found", 404);
     }
