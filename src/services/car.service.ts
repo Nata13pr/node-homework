@@ -27,7 +27,7 @@ class CarService {
 
     if (!price || price < 2000) {
       throw new ApiError(
-        "                             if (!price || price < 2000) {\n is required and should be at least 6 characters",
+        "if (!price || price < 2000) {\n is required and should be at least 6 characters",
         400,
       );
     }
