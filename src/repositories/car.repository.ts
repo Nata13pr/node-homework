@@ -1,70 +1,38 @@
-import { fsCarService } from "../car.fs.service";
-import { ApiError } from "../errors/api-error";
 import { ICar } from "../interfaces/car.interface";
+import { Car } from "../models/car.model";
 
 class CarRepository {
   public async getList(): Promise<ICar[]> {
-    return await fsCarService.read();
+    return await Car.find();
   }
 
-  public async getCarrById(id: number): Promise<ICar> {
-    const cars = await fsCarService.read();
-    const car = await cars.find((car) => car.id === id);
-
-    if (!car) {
-      throw new ApiError("Car not found", 409);
-    }
-    return car;
+  public async getCarById(id: string): Promise<ICar> {
+    return await Car.findById(id);
   }
 
   public async update(
     brand: string,
     year: number,
     price: number,
-    id: number,
+    id: string,
   ): Promise<ICar> {
-    const cars = await this.getList();
-    const car = await cars.find((car) => car.id === id);
+    const car = await this.getCarById(id);
 
-    if (!car) {
-      throw new ApiError(`There is no car with id ${id}`, 400);
-    }
+    if (brand) car.brand = brand;
+    if (year) car.year = year;
+    if (price) car.price = price;
 
-    car.brand = brand;
-    car.year = year;
-    car.price = price;
-
-    await fsCarService.write(cars);
+    await Car.updateOne(car);
 
     return car;
   }
 
   public async create(dto: ICar): Promise<ICar> {
-    const cars = await fsCarService.read();
-
-    const newCar = {
-      id: cars[cars.length - 1].id + 1,
-      brand: dto.brand,
-      year: dto.year,
-      price: dto.price,
-    };
-    cars.push(newCar);
-    await fsCarService.write(cars);
-    return newCar;
+    return await Car.create(dto);
   }
 
-  public async delete(id: number): Promise<void> {
-    const cars = await fsCarService.read();
-
-    const index = cars.findIndex((car) => car.id === id);
-
-    if (index === -1) {
-      throw new ApiError("Car not found", 404);
-    }
-
-    cars.splice(index, 1);
-
-    await fsCarService.write(cars);
+  public async delete(id: string): Promise<void> {
+    await Car.findOneAndDelete({ _id: id });
   }
 }
 

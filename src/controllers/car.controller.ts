@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import { ICar } from "../interfaces/car.interface";
 
-import { ApiError } from "../errors/api-error";
 import { carService } from "../services/car.service";
 
 class CarController {
@@ -25,10 +25,8 @@ class CarController {
 
   public async getById(req: Request, res: Response, next: NextFunction) {
     try {
-      const carId = Number(req.params.carId);
-      if (!carId) {
-        throw new ApiError("   Write carId or write a number not symbols", 409);
-      }
+      const carId = req.params.carId;
+
       const car = await carService.getCarById(carId);
 
       res.json(car);
@@ -39,9 +37,9 @@ class CarController {
 
   public async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const carId = Number(req.params.carId);
+      const carId = req.params.carId;
 
-      const dto = req.body as any;
+      const dto = req.body as ICar;
 
       const car = await carService.update(dto, carId);
 
@@ -51,14 +49,12 @@ class CarController {
     }
   }
 
-  public async delete(req: Request, res: Response, next: NextFunction) {
-    try {
-      const carId = Number(req.params.carId);
-      if (!carId) {
-        throw new ApiError("   Write carId or write a number not symbols", 409);
-      }
+  public async delete       (req: Request, res: Response, next: NextFunction) {
 
-      await carService.delete(carId);
+    try {
+      const carId = req.params.carId;
+
+      await carService.delete(carId)
 
       res.status(201).send({ message: "Car deleted successfully" });
     } catch (e) {
