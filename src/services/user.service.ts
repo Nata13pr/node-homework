@@ -1,5 +1,6 @@
 import { ApiError } from "../errors/api-error";
-import { IUser } from "../interfaces/user.interface";
+import { IUpdateUser } from "../interfaces/user/updateUser.interface";
+import { IUser } from "../interfaces/user/user.interface";
 import { userRepository } from "../repositories/user.repository";
 
 class UserService {
@@ -7,15 +8,15 @@ class UserService {
     return await userRepository.getList();
   }
 
-  public async getUserById(id: number): Promise<IUser> {
+  public async getUserById(id: string): Promise<IUser> {
     return await userRepository.getUserById(id);
   }
 
-  public async update(dto: IUser, id: number): Promise<IUser> {
+  public async update(dto: IUpdateUser, id: string): Promise<IUpdateUser> {
     return await userRepository.update(dto, id);
   }
 
-  public async delete(id: number): Promise<void> {
+  public async delete(id: string): Promise<void> {
     await userRepository.delete(id);
   }
 

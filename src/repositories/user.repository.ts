@@ -1,69 +1,37 @@
-import { ApiError } from "../errors/api-error";
-import { fsService } from "../fs.service";
-import { IUser } from "../interfaces/user.interface";
+import { IUpdateUser } from "../interfaces/user/updateUser.interface";
+import { IUser } from "../interfaces/user/user.interface";
+import { User } from "../models/user.model";
 
 class UserRepository {
   public async getList(): Promise<IUser[]> {
-    return await fsService.read();
+    return await User.find();
   }
 
   public async create(dto: IUser): Promise<IUser> {
-    const users = await fsService.read();
-
-    const index = users.findIndex((user) => user.email === dto.email);
-
-    if (index !== -1) {
-      throw new ApiError("User with this email already exists", 409);
-    }
-    const newUser = {
-      id: users[users.length - 1].id + 1,
-      name: dto.name,
-      email: dto.email,
-      password: dto.password,
-    };
-    users.push(newUser);
-    await fsService.write(users);
-    return newUser;
+    return await User.create(dto);
   }
 
-  public async getUserById(id: number): Promise<IUser> {
-    const users = await fsService.read();
-    const user = await users.find((user) => user.id === id);
-    if (!user) {
-      throw new ApiError("User not found", 409);
-    }
-    return user;
+  public async getUserById(id: string): Promise<IUser> {
+    return await User.findById(id);
   }
 
-  public async update(dto: IUser, id: number): Promise<IUser> {
-    const { name, email, password } = dto;
+  public async update(dto: IUpdateUser, id: string): Promise<IUpdateUser> {
+    const { name, email, phone, age } = dto;
 
-    const users = await this.getList();
-    const user = await users.find((user) => user.id === id);
-    if (!user) {
-      throw new ApiError(`There is no user with id ${id}`, 400);
-    }
+    const user = await this.getUserById(id);
 
     if (name) user.name = name;
     if (email) user.email = email;
-    if (password) user.password = password;
+    if (phone) user.phone = phone;
+    if (age) user.age = age;
 
-    await fsService.write(users);
+    await User.updateOne(user);
 
     return user;
   }
 
-  public async delete(id: number): Promise<void> {
-    const users = await fsService.read();
-
-    const index = users.findIndex((user) => user.id === id);
-    if (index === -1) {
-      throw new ApiError("User not found", 404);
-    }
-    users.splice(index, 1);
-
-    await fsService.write(users);
+  public async delete(id: string): Promise<void> {
+    await User.findOneAndDelete({ _id: id });
   }
 }
-
 export const userRepository = new UserRepository();

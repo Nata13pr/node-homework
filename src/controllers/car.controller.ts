@@ -41,9 +41,6 @@ class CarController {
     try {
       const carId = Number(req.params.carId);
 
-      if (!carId) {
-        throw new ApiError("   Write carId or write a number not symbols", 409);
-      }
       const dto = req.body as any;
 
       const car = await carService.update(dto, carId);
