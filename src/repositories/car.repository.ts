@@ -61,6 +61,7 @@ class CarRepository {
     if (index === -1) {
       throw new ApiError("Car not found", 404);
     }
+
     cars.splice(index, 1);
 
     await fsCarService.write(cars);
