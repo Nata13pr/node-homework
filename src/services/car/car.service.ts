@@ -1,5 +1,5 @@
-import { ICar } from "../interfaces/car.interface";
-import { carRepository } from "../repositories/car.repository";
+import { ICar } from "../../interfaces/car.interface";
+import { carRepository } from "../../repositories/car/car.repository";
 
 class CarService {
   public async getList(): Promise<ICar[]> {

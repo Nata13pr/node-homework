@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../../errors/api-error";
-import { carRepository } from "../../repositories/car.repository";
+import { carRepository } from "../../repositories/car/car.repository";
 
 class CarMiddleware {
   public async ifCarExists(req: Request, res: Response, next: NextFunction) {

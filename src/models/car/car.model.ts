@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { ICar } from "../interfaces/car.interface";
+import { ICar } from "../../interfaces/car.interface";
 
 const { Schema } = mongoose;
 

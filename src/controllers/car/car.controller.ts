@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { ICar } from "../interfaces/car.interface";
 
-import { carService } from "../services/car.service";
+import { ICar } from "../../interfaces/car.interface";
+import { carService } from "../../services/car/car.service";
 
 class CarController {
   public async getList(req: Request, res: Response, next: NextFunction) {
@@ -49,12 +49,11 @@ class CarController {
     }
   }
 
-  public async delete       (req: Request, res: Response, next: NextFunction) {
-
+  public async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const carId = req.params.carId;
 
-      await carService.delete(carId)
+      await carService.delete(carId);
 
       res.status(201).send({ message: "Car deleted successfully" });
     } catch (e) {

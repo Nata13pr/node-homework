@@ -1,15 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../../errors/api-error";
-import { userRepository } from "../../repositories/user.repository";
+import { userRepository } from "../../repositories/user/user.repository";
 
 class UserMiddleware {
-
   public async ifUserExists(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.params.userId;
 
-      const user = await userRepository.getUserById(userId);
+      const user = await userRepository.getById(userId);
 
       if (!user) {
         throw new ApiError("User not found", 404);
