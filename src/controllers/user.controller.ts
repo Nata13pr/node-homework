@@ -7,6 +7,7 @@ class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await userService.getList();
+
       res.json(result);
     } catch (e) {
       next(e);
