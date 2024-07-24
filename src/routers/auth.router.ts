@@ -20,9 +20,9 @@ router.post(
 );
 
 router.post(
-  '/refresh',
+  "/refresh",
   authMiddleware.checkRefreshToken,
-  authController.refresh
-)
+  authController.refresh,
+);
 
 export const authRouter = router;

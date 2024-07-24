@@ -30,6 +30,7 @@ class AuthController {
 
   public async refresh(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log('refresh');
       const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
       const oldTokensId = req.res.locals.oldTokensId as string;
       const result = await authService.refresh(jwtPayload, oldTokensId);
