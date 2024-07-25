@@ -11,7 +11,6 @@ class UserRepository {
     }
 
     public async create(dto: IUser): Promise<IUser> {
-
         return await User.create(dto);
     }
 
