@@ -17,12 +17,14 @@ class AuthMiddleware {
       }
       const accessToken = header.split("Bearer ")[1];
       const payload = tokenService.checkToken(accessToken);
-
+      console.log(accessToken,'accessToken');
       const pair = await tokenRepository.findByParams({ accessToken });
+      console.log(pair,'pair');
       if (!pair) {
         throw new ApiError("Token is not valid", 401);
       }
       req.res.locals.jwtPayload = payload;
+      req.res.locals.oldTokensId=pair._userId
       next();
     } catch (e) {
       next(e);
@@ -48,7 +50,7 @@ class AuthMiddleware {
         throw new ApiError("Token is not valid", 401);
       }
       req.res.locals.jwtPayload = payload;
-      req.res.locals.oldTokensId = pair._id;
+      req.res.locals.oldTokensId = pair._userId;
       next();
     } catch (e) {
       next(e);

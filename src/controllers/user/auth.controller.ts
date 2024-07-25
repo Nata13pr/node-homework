@@ -27,6 +27,18 @@ class AuthController {
     }
   }
 
+  public async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      const oldTokensId = req.res.locals.oldTokensId as string;
+      console.log(oldTokensId,'old');
+      await authService.logout( oldTokensId);
+
+      res.status(204).send('logout');
+    } catch (e) {
+      next(e);
+    }
+  }
+
   public async refreshToken(req: Request, res: Response, next: NextFunction) {
     try {
       const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
@@ -39,6 +51,8 @@ class AuthController {
       next(e);
     }
   }
+
+
 }
 
 export const authController = new AuthController();

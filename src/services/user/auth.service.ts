@@ -30,6 +30,8 @@ class AuthService {
     payload: ITokenPayload,
     oldTokenId: string,
   ): Promise<ITokenPair> {
+    console.log(payload,'payload');
+    console.log(oldTokenId,'oldTokenId');
     const tokens = await tokenService.generatePair({
       userId: payload.userId,
       role: payload.role,
@@ -59,6 +61,12 @@ class AuthService {
     });
     await tokenRepository.create({ ...tokens, _userId: user._id });
     return { user, tokens };
+  }
+
+  public async logout(
+    oldTokenId: string,
+  ): Promise<void> {
+    await tokenRepository.deleteById(oldTokenId);
   }
 
   private async isEmailExist(email: string): Promise<void> {
