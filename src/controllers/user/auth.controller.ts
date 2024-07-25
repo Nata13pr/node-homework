@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ITokenPayload } from "../../interfaces/user/token.interface";
-import { IUser } from "../../interfaces/user/user.interface";
+import { ILogin, IUser } from "../../interfaces/user/user.interface";
 // import { tokenRepository } from "../../repositories/user/token.repository";
 import { authService } from "../../services/user/auth.service";
 // import { tokenService } from "../../services/user/token.service";
@@ -19,7 +19,7 @@ class AuthController {
 
   public async signIn(req: Request, res: Response, next: NextFunction) {
     try {
-      const dto = req.body as any;
+      const dto = req.body as ILogin;
       const result = await authService.signIn(dto);
       res.status(201).json(result);
     } catch (e) {
@@ -30,10 +30,11 @@ class AuthController {
   public async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const oldTokensId = req.res.locals.oldTokensId as string;
-      console.log(oldTokensId,'old');
-      await authService.logout( oldTokensId);
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
 
-      res.status(204).send('logout');
+      await authService.logout(oldTokensId, jwtPayload);
+
+      res.status(204).send("logout");
     } catch (e) {
       next(e);
     }
@@ -51,8 +52,6 @@ class AuthController {
       next(e);
     }
   }
-
-
 }
 
 export const authController = new AuthController();

@@ -1,3 +1,4 @@
+import { EmailTypeEnum } from "../../enums/email-type.enum";
 import { ApiError } from "../../errors/api-error";
 import {
   ITokenPair,
@@ -6,6 +7,7 @@ import {
 import { IUser } from "../../interfaces/user/user.interface";
 import { tokenRepository } from "../../repositories/user/token.repository";
 import { userRepository } from "../../repositories/user/user.repository";
+import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
@@ -23,6 +25,12 @@ class AuthService {
       role: user.role,
     });
     await tokenRepository.create({ ...tokens, _userId: user._id });
+
+    await emailService.sendEmail(EmailTypeEnum.WELCOME, dto.email, {
+      name: dto.name,
+      actionToken: "actionToken",
+    });
+
     return { user, tokens };
   }
 
@@ -30,14 +38,13 @@ class AuthService {
     payload: ITokenPayload,
     oldTokenId: string,
   ): Promise<ITokenPair> {
-    console.log(payload,'payload');
-    console.log(oldTokenId,'oldTokenId');
     const tokens = await tokenService.generatePair({
       userId: payload.userId,
       role: payload.role,
     });
     await tokenRepository.create({ ...tokens, _userId: payload.userId });
     await tokenRepository.deleteById(oldTokenId);
+
     return tokens;
   }
 
@@ -65,8 +72,15 @@ class AuthService {
 
   public async logout(
     oldTokenId: string,
+    jwtPayload: ITokenPayload,
   ): Promise<void> {
     await tokenRepository.deleteById(oldTokenId);
+    const user = await userRepository.getById(jwtPayload.userId);
+
+    await emailService.sendEmail(EmailTypeEnum.LOGOUT, user.email, {
+      name: user.name,
+      actionToken: "actionToken",
+    });
   }
 
   private async isEmailExist(email: string): Promise<void> {
