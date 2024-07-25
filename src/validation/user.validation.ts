@@ -14,19 +14,18 @@ export class UserValidator {
     age: UserValidator.age.required(),
     email: UserValidator.email.required(),
     password: UserValidator.password.required(),
-    phone: UserValidator.phone.required()
+    phone: UserValidator.phone.required(),
   });
 
   public static login = joi.object({
     email: UserValidator.email.required(),
-    password: UserValidator.password.required()
+    password: UserValidator.password.required(),
   });
 
   public static updateUser = joi.object({
     name: UserValidator.name,
     age: UserValidator.age,
     email: UserValidator.email,
-    phone: UserValidator.phone
+    phone: UserValidator.phone,
   });
-
 }

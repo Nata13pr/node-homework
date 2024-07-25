@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { authController } from "../../controllers/user/auth.controller";
 import { commonMiddleware } from "../../middleware/common.middleware";
+import { authMiddleware } from "../../middleware/user/auth.middleware";
 import { UserValidator } from "../../validation/user.validation";
 
 const router = Router();
@@ -18,6 +19,10 @@ router.post(
   authController.signIn,
 );
 
-router.post("/refreshToken", authController.refreshToken);
+router.post(
+  "/refresh",
+  authMiddleware.checkRefreshToken,
+  authController.refreshToken,
+);
 
 export const authRouter = router;

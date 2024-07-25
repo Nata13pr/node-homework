@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "../../errors/api-error";
+import { ITokenPayload } from "../../interfaces/user/token.interface";
 import { IUser } from "../../interfaces/user/user.interface";
-import { tokenRepository } from "../../repositories/user/token.repository";
+// import { tokenRepository } from "../../repositories/user/token.repository";
 import { authService } from "../../services/user/auth.service";
-import { tokenService } from "../../services/user/token.service";
-
+// import { tokenService } from "../../services/user/token.service";
 
 class AuthController {
   public async signUp(req: Request, res: Response, next: NextFunction) {
@@ -30,27 +29,10 @@ class AuthController {
 
   public async refreshToken(req: Request, res: Response, next: NextFunction) {
     try {
-      const refreshToken = req.cookies.refreshToken;
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const oldTokens = req.res.locals.oldTokensId as string;
 
-      if (!refreshToken) {
-        throw new ApiError("Token is not provided", 401);
-      }
-      const payload = tokenService.refreshToken(refreshToken);
-
-      const pair = await tokenRepository.findByParams({ refreshToken });
-
-      if (!pair) {
-        throw new ApiError("Token is not valid", 401);
-      }
-
-      await tokenRepository.findByParamsAndDelete({ refreshToken });
-
-      const tokens = await tokenService.generatePair({
-        userId: payload.userId,
-        role: payload.role,
-      });
-
-      const result = { payload, tokens };
+      const result = await authService.refresh(jwtPayload, oldTokens);
 
       res.status(201).json(result);
     } catch (e) {

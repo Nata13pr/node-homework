@@ -29,7 +29,31 @@ class AuthMiddleware {
     }
   }
 
+  public async checkRefreshToken(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
 
+      if (!refreshToken) {
+        throw new ApiError("Token is not provided", 401);
+      }
+      const payload = tokenService.refreshToken(refreshToken);
+
+      const pair = await tokenRepository.findByParams({ refreshToken });
+
+      if (!pair) {
+        throw new ApiError("Token is not valid", 401);
+      }
+      req.res.locals.jwtPayload = payload;
+      req.res.locals.oldTokensId = pair._id;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const authMiddleware = new AuthMiddleware();
