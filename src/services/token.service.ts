@@ -8,18 +8,16 @@ import { ITokenPair, ITokenPayload } from "../interfaces/token.interface";
 class TokenService {
   public async generatePair(payload: ITokenPayload): Promise<ITokenPair> {
     const accessToken = jsonwebtoken.sign(payload, configs.JWT_ACCESS_SECRET, {
-      expiresIn: configs.JWT_ACCESS_EXPIRES_IN
+      expiresIn: configs.JWT_ACCESS_EXPIRES_IN,
     });
     const refreshToken = jsonwebtoken.sign(
       payload,
       configs.JWT_REFRESH_SECRET,
-      {
-        expiresIn: configs.JWT_REFRESH_EXPIRES_IN
-      }
+      { expiresIn: configs.JWT_REFRESH_EXPIRES_IN },
     );
     return {
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 
@@ -37,7 +35,7 @@ class TokenService {
           throw new ApiError("Token type is not valid", 401);
       }
       return jsonwebtoken.verify(token, secret) as ITokenPayload;
-    } catch (e) {
+    } catch (error) {
       throw new ApiError("Token is not valid", 401);
     }
   }
