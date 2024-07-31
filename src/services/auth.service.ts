@@ -15,13 +15,37 @@ import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
-  public async signUp(
-    dto: IUser,
-  ): Promise<{ user: IUser; tokens: ITokenPair }> {
+  public async signUp(dto: IUser): Promise<{ user: IUser }> {
     await this.isEmailExist(dto.email);
 
     const password = await passwordService.hashPassword(dto.password);
     const user = await userRepository.create({ ...dto, password });
+
+    const actionToken = await tokenService.generateActionToken(
+      { userId: user._id, role: user.role },
+      ActionTokenTypeEnum.VERIFY_PASSWORD,
+    );
+    await actionTokenRepository.create({
+      actionToken,
+      type: ActionTokenTypeEnum.VERIFY_PASSWORD,
+      _userId: user._id,
+    });
+
+    await emailService.sendEmail(EmailTypeEnum.WELCOME, dto.email, {
+      name: dto.name,
+      actionToken,
+    });
+    return { user };
+  }
+
+  public async verifyMe(
+    userId: string,
+  ): Promise<{ user: IUser; tokens: ITokenPair }> {
+    await actionTokenRepository.deleteByParams({
+      _userId: userId,
+      type: ActionTokenTypeEnum.VERIFY_PASSWORD,
+    });
+    const user = await userRepository.getById(userId);
 
     const tokens = await tokenService.generatePair({
       userId: user._id,
@@ -30,10 +54,6 @@ class AuthService {
 
     await tokenRepository.create({ ...tokens, _userId: user._id });
 
-    await emailService.sendEmail(EmailTypeEnum.WELCOME, dto.email, {
-      name: dto.name,
-      actionToken: tokens.accessToken,
-    });
     return { user, tokens };
   }
 
