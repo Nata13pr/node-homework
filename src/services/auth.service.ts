@@ -38,23 +38,11 @@ class AuthService {
     return { user };
   }
 
-  public async verifyMe(
-    userId: string,
-  ): Promise<{ user: IUser; tokens: ITokenPair }> {
+  public async verifyMe(userId: string): Promise<void> {
     await actionTokenRepository.deleteByParams({
       _userId: userId,
       type: ActionTokenTypeEnum.VERIFY_PASSWORD,
     });
-    const user = await userRepository.getById(userId);
-
-    const tokens = await tokenService.generatePair({
-      userId: user._id,
-      role: user.role,
-    });
-
-    await tokenRepository.create({ ...tokens, _userId: user._id });
-
-    return { user, tokens };
   }
 
   public async signIn(
