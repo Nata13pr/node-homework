@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
 import { IUser } from "../interfaces/user.interface";
-import { authService } from "../services/auth.service";
 import { userService } from "../services/user.service";
 
 class UserController {
@@ -39,20 +38,6 @@ class UserController {
     try {
       const userId = req.res.locals.jwtPayload.userId as string;
       const dto = req.body as IUser;
-
-      const result = await userService.updateMe(userId, dto);
-      res.status(201).json(result);
-    } catch (e) {
-      next(e);
-    }
-  }
-
-  public async verifyMe(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = req.res.locals.jwtPayload.userId as string;
-      const dto = req.body as IUser;
-
-      await authService.verifyMe(userId);
 
       const result = await userService.updateMe(userId, dto);
       res.status(201).json(result);

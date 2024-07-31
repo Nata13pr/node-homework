@@ -1,9 +1,7 @@
 import { Router } from "express";
 
 import { authController } from "../controllers/auth.controller";
-import { userController } from "../controllers/user.controller";
 import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
-import { TokenTypeEnum } from "../enums/token-type.enum";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
 import { UserValidator } from "../validators/user.validator";
@@ -16,12 +14,6 @@ router.post(
   authController.signUp,
 );
 router.post(
-  "/verify",
-  authMiddleware.checkActionToken(ActionTokenTypeEnum.VERIFY_PASSWORD),
-  userController.verifyMe,
-);
-
-router.post(
   "/sign-in",
   commonMiddleware.isBodyValid(UserValidator.login),
   authController.signIn,
@@ -29,19 +21,14 @@ router.post(
 
 router.post(
   "/refresh",
-  authMiddleware.checkToken(TokenTypeEnum.REFRESH),
-  // authMiddleware.checkRefreshToken,
+  authMiddleware.checkRefreshToken,
   authController.refresh,
 );
 
-router.post(
-  "/logout",
-  authMiddleware.checkToken(TokenTypeEnum.ACCESS),
-  authController.logout,
-);
+router.post("/logout", authMiddleware.checkAccessToken, authController.logout);
 router.post(
   "/logout-all",
-  authMiddleware.checkToken(TokenTypeEnum.ACCESS),
+  authMiddleware.checkAccessToken,
   authController.logoutAll,
 );
 
@@ -55,6 +42,19 @@ router.put(
   commonMiddleware.isBodyValid(UserValidator.forgotPasswordSet),
   authMiddleware.checkActionToken(ActionTokenTypeEnum.FORGOT_PASSWORD),
   authController.forgotPasswordSet,
+);
+
+router.post(
+  "/verify",
+  authMiddleware.checkActionToken(ActionTokenTypeEnum.VERIFY_EMAIL),
+  authController.verify,
+);
+
+router.post(
+  "/change-password",
+  authMiddleware.checkAccessToken,
+  commonMiddleware.isBodyValid(UserValidator.changePassword),
+  authController.changePassword,
 );
 
 export const authRouter = router;
