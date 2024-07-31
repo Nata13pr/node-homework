@@ -17,7 +17,6 @@ router.put(
   userController.updateMe,
 );
 router.delete("/me", authMiddleware.checkAccessToken, userController.deleteMe);
-
 router.get(
   "/:userId",
   commonMiddleware.isIdValid("userId"),
