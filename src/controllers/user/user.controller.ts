@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 
 import { IUser } from "../../interfaces/user/user.interface";
-// import { IUser } from "../interfaces/user/user.interface";
 import { userService } from "../../services/user/user.service";
 
 class UserController {
   public async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await userService.getList();
+      const query = req.query;
+      const result = await userService.getList(query);
       res.json(result);
     } catch (e) {
       next(e);
@@ -24,24 +24,33 @@ class UserController {
     }
   }
 
-  public async updateById(req: Request, res: Response, next: NextFunction) {
+  public async getMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.userId;
+      const userId = req.res.locals.jwtPayload.userId as string;
+      const result = await userService.getMe(userId);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async updateMe(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.res.locals.jwtPayload.userId as string;
       const dto = req.body as IUser;
 
-      const result = await userService.updateById(userId, dto);
+      const result = await userService.updateMe(userId, dto);
       res.status(201).json(result);
     } catch (e) {
       next(e);
     }
   }
 
-  public async deleteById(req: Request, res: Response, next: NextFunction) {
+  public async deleteMe(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.params.userId;
-      await userService.deleteById(userId);
-
-      res.status(204);
+      const userId = req.res.locals.jwtPayload.userId as string;
+      await userService.deleteMe(userId);
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }
