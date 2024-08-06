@@ -1,7 +1,8 @@
 import { oldVisitorCron } from "./old-visitor.cron";
 import { removeOldPasswordsCron } from "./remove-old-passwords.cron";
 import { removeOldTokensCron } from "./remove-old-tokens.cron";
-import { testCron } from "./test.cron";
+import { testCron } from "./test";
+
 
 export const jobRunner = () => {
   testCron.start();
