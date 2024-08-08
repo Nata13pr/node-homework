@@ -1,5 +1,4 @@
 import { UploadedFile } from "express-fileupload";
-import { configs } from "../configs/configs";
 
 import { IUser } from "../interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";
@@ -31,9 +30,9 @@ class UserService {
     file: UploadedFile,
   ): Promise<IUser> {
     const user = await userRepository.getById(userId);
-console.log(configs,'configs')
+
     const avatar = await s3Service.uploadFile("user", userId, file);
-    console.log(avatar,'avatar');
+
     const updatedUser = await userRepository.updateById(userId, { avatar });
 
     if (user.avatar) {

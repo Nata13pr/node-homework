@@ -64,11 +64,13 @@ class UserController {
   public async uploadAvatar(req: Request, res: Response, next: NextFunction) {
     try {
       const avatar = req.files?.avatar as UploadedFile;
+
       const userId = req.res.locals.jwtPayload.userId as string;
-      console.log(userId,'userI');
+
       const user = await userService.uploadAvatar(userId, avatar);
-      console.log(user,'uuuuuuuuuuuuuuuu');
+
       const result = UserPresenter.toResponse(user);
+
       res.status(201).json(result);
     } catch (e) {
       next(e);

@@ -24,9 +24,6 @@ class S3Service {
     file: UploadedFile,
   ): Promise<string> {
     const filePath = `${itemType}/${itemId}/${randomUUID()}${path.extname(file.name)}`;
-    console.log(filePath,'pppppp');
-    console.log( process.env.AWS_BUCKET_NAME,'6666666666666666666');
-    console.log(configs.AWS_BUCKET_NAME,'hhhhhhhhhhhhhhhh');
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: configs.AWS_BUCKET_NAME,
