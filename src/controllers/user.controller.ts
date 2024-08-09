@@ -3,6 +3,8 @@ import { UploadedFile } from "express-fileupload";
 
 import { IUser } from "../interfaces/user.interface";
 import { UserPresenter } from "../presenter/user.presenter";
+import { userRepository } from "../repositories/user.repository";
+import { s3Service } from "../services/s3.service";
 import { userService } from "../services/user.service";
 
 class UserController {
@@ -72,6 +74,20 @@ class UserController {
       const result = UserPresenter.toResponse(user);
 
       res.status(201).json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async deleteAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.res.locals.jwtPayload.userId as string;
+
+      const user = await userRepository.getById(userId);
+
+      await s3Service.deleteFile(user.avatar);
+
+      res.sendStatus(204);
     } catch (e) {
       next(e);
     }
