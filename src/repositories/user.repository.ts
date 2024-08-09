@@ -25,6 +25,10 @@ class UserRepository {
     });
   }
 
+  public async updateOne(userId: string): Promise<void> {
+    await User.updateOne({ _id: userId }, { $unset: { avatar: "" } });
+  }
+
   public async findWithOutActivityAfter(date: Date): Promise<IUser[]> {
     return await User.aggregate([
       {

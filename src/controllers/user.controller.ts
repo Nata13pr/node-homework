@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
+import { ApiError } from "../errors/api-error";
 import { IUser } from "../interfaces/user.interface";
 import { UserPresenter } from "../presenter/user.presenter";
 import { userRepository } from "../repositories/user.repository";
@@ -85,7 +86,12 @@ class UserController {
 
       const user = await userRepository.getById(userId);
 
+      if (!user.avatar) {
+        throw new ApiError("There is no avatar", 404);
+      }
       await s3Service.deleteFile(user.avatar);
+
+      await userRepository.updateOne(userId);
 
       res.sendStatus(204);
     } catch (e) {
