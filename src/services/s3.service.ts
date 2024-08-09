@@ -1,10 +1,15 @@
 import path from "node:path";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import { UploadedFile } from "express-fileupload";
 
 import { configs } from "../configs/configs";
+import { FileValidator } from "../validators/file.validator";
 
 class S3Service {
   constructor(
@@ -23,6 +28,13 @@ class S3Service {
     itemId: string,
     file: UploadedFile,
   ): Promise<string> {
+    const { error } = FileValidator.uploadFile.validate({
+      size: file.size,
+      mimetype: file.mimetype,
+    });
+    if (error) {
+      throw new Error(`File validation error: ${error.message}`);
+    }
     const filePath = `${itemType}/${itemId}/${randomUUID()}${path.extname(file.name)}`;
     await this.s3Client.send(
       new PutObjectCommand({
@@ -35,6 +47,16 @@ class S3Service {
     );
 
     return filePath;
+  }
+
+  public async deleteFile(itemPath: string): Promise<void> {
+    await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: configs.AWS_BUCKET_NAME,
+        Key: itemPath,
+      }),
+    );
+    console.log(`Deleted: ${itemPath}`);
   }
 }
 
