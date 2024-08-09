@@ -9,12 +9,13 @@ import { configs } from "../configs/configs";
 class S3Service {
   constructor(
     private readonly s3Client = new S3Client({
-      forcePathStyle: true,
       region: configs.AWS_REGION,
       credentials: {
         accessKeyId: configs.AWS_ACCESS_KEY,
         secretAccessKey: configs.AWS_SECRET_ACCESS_KEY,
       },
+      forcePathStyle: true,
+      endpoint: configs.AWS_ENDPOINT_URL,
     }),
   ) {}
 
