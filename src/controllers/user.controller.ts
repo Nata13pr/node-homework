@@ -61,6 +61,17 @@ class UserController {
     }
   }
 
+  public async deleteAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.res.locals.jwtPayload.userId as string;
+      const user = await userService.deleteAvatar(userId);
+      const result = UserPresenter.toResponse(user);
+      res.status(201).json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   public async uploadAvatar(req: Request, res: Response, next: NextFunction) {
     try {
       const avatar = req.files?.avatar as UploadedFile;

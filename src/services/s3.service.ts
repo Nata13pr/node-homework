@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import { UploadedFile } from "express-fileupload";
 
@@ -35,6 +35,15 @@ class S3Service {
     );
 
     return filePath;
+  }
+
+  public async deleteFile(pathToFile: string): Promise<void> {
+    await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: configs.AWS_BUCKET_NAME,
+        Key: pathToFile,
+      }),
+    );
   }
 }
 
