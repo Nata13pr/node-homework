@@ -3,7 +3,6 @@ import { UploadedFile } from "express-fileupload";
 
 import { IUser, IUserListQuery } from "../interfaces/user.interface";
 import { UserPresenter } from "../presenters/user.presenter";
-
 import { userService } from "../services/user.service";
 
 class UserController {
