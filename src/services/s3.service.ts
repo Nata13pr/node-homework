@@ -1,6 +1,10 @@
 import path from "node:path";
 
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import { UploadedFile } from "express-fileupload";
 

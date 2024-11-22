@@ -6,7 +6,6 @@ import {
   IUserResponseList,
 } from "../interfaces/user.interface";
 import { UserPresenter } from "../presenters/user.presenter";
-
 import { userRepository } from "../repositories/user.repository";
 import { s3Service } from "./s3.service";
 
